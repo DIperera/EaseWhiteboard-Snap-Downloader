@@ -1,19 +1,23 @@
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image, ImageDraw, ImageGrab
+from PIL import ImageGrab
 
 class Whiteboard:
     def __init__(self, root):
         self.root = root
-        self.root.title("Whiteboard 🖊️")
+        self.root.title("🖊️ DIPWboard byIshiraPerera")
         self.root.geometry("800x600")
         self.root.config(bg="white")
 
-        # Canvas for drawing
-        self.canvas = tk.Canvas(self.root, bg="white", width=800, height=550)
+        # Frame with black border to contain the canvas
+        self.border_frame = tk.Frame(self.root, bg="black", padx=2, pady=2)
+        self.border_frame.pack(pady=10)
+
+        # Canvas inside the frame
+        self.canvas = tk.Canvas(self.border_frame, bg="white", width=780, height=500, highlightthickness=0)
         self.canvas.pack()
 
-        # Button to download drawing
+        # Download button
         download_btn = tk.Button(self.root, text="Download Drawing 🖼️", command=self.download)
         download_btn.pack(pady=10)
 
@@ -38,15 +42,15 @@ class Whiteboard:
 
     def download(self):
         # Get canvas location and dimensions
-        x = self.root.winfo_rootx() + self.canvas.winfo_x()
-        y = self.root.winfo_rooty() + self.canvas.winfo_y()
+        x = self.root.winfo_rootx() + self.canvas.winfo_rootx()
+        y = self.root.winfo_rooty() + self.canvas.winfo_rooty()
         x1 = x + self.canvas.winfo_width()
         y1 = y + self.canvas.winfo_height()
 
-        # Grab the canvas area as an image
-        image = ImageGrab.grab().crop((x, y, x1, y1))
+        # Grab only the canvas area (inside the black border)
+        image = ImageGrab.grab(bbox=(x, y, x1, y1))
 
-        # Ask where to save
+        # Save dialog
         file_path = filedialog.asksaveasfilename(defaultextension=".jpg",
                                                  filetypes=[("JPEG files", "*.jpg"), ("PNG files", "*.png")],
                                                  title="Save Drawing")
